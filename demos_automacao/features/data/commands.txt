@@ -1,0 +1,4 @@
+cd features/data
+touch arquivo.txt
+current_time=$(date "+%Y.%m.%d-%H.%M.%S") && echo "Current Timestamp : $current_time" > arquivo.txt
+cp arquivo.txt resultado.txt

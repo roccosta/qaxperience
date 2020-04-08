@@ -1,0 +1,4 @@
+<% REPORT_NAME = "report-#{Time.now.strftime('%Y%m%d-%H%M%S')}"%>
+
+default: --no-source --color --format pretty
+report: -p default --format json --out reports/<%=REPORT_NAME+"-hlg.json"%> REPORT_NAME=<%=REPORT_NAME+"-hlg.json"%>

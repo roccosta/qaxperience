@@ -1,0 +1,47 @@
+require 'rake'
+require 'rubygems'
+require 'cucumber'
+require 'cucumber/rake/task'
+require 'assertthat-bdd'
+
+Cucumber::Rake::Task.new do |t|
+  t.cucumber_opts = %w[ --format json -o reports/cucumber.json --format html -o reports/cucumber.html]
+end
+
+task :download_features do
+ AssertThatBDD::Features.download(
+ 							  #Optional can be supplied as environment variable f19d7d0865c67cabc600320282c674dfab7f5cf4ff2875fdf507a1f921a58870
+ 							  accessKey:'f19d7d0865c67cabc600320282c674dfab7f5cf4ff2875fdf507a1f921a58870',
+							  #Optional can be supplied as environment variable 0f53929042f069458f7064bb5e75cec596ffbc9af6060d120a403b6b118bf053
+							  secretKey:'0f53929042f069458f7064bb5e75cec596ffbc9af6060d120a403b6b118bf053', 
+							  #Required Jira project id e.g. 10001
+							  projectId: '10000',
+							  #Optional - default ./features
+							  outputFolder: './features/'
+							 ) 
+end
+
+task :upload_report do
+ AssertThatBDD::Report.upload(
+ 							  #Optional can be supplied as environment variable f19d7d0865c67cabc600320282c674dfab7f5cf4ff2875fdf507a1f921a58870
+ 							  accessKey:'f19d7d0865c67cabc600320282c674dfab7f5cf4ff2875fdf507a1f921a58870',
+							  #Optional can be supplied as environment variable 0f53929042f069458f7064bb5e75cec596ffbc9af6060d120a403b6b118bf053
+							  secretKey:'0f53929042f069458f7064bb5e75cec596ffbc9af6060d120a403b6b118bf053', 
+							  #Jira project id e.g. 10001
+							  projectId: '10000',
+							  #The name of the run - default 'Test run dd MMM yyyy HH:mm:ss'
+							  runName: "Dry Tests Run",
+    						  #Json report folder - default ./reports
+    					      jsonReportFolder: "reports",
+    						  #Regex to search for cucumber reports - default .*.json
+    						  jsonReportIncludePattern: ".*/cucumber.json"
+							 ) 
+end
+
+task :cucumber => :download_features
+
+task :default => :cucumber
+
+Rake::Task["cucumber"].enhance do
+  Rake::Task[:upload_report].invoke
+end
